@@ -1,0 +1,17 @@
+{
+  "appId": "tj.activbank.qr",
+  "appName": "ActivBank QR",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "plugins": {
+    "CapacitorHttp": { "enabled": false }
+  },
+  "android": {
+    "allowMixedContent": true,
+    "webContentsDebuggingEnabled": true
+  }
+}

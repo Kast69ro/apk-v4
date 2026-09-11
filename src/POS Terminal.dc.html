@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+<script src="./image-slot.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; background: #24262A; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  a { color: #0E8F6F; text-decoration: none; }
+  a:hover { color: #0B7259; }
+  @keyframes posSpin { to { transform: rotate(360deg); } }
+</style>
+</helmet>
+<div style="width: 100%; max-width: 520px; margin: 0 auto; height: 100dvh; min-height: 420px; display: flex; flex-direction: column; position: relative; overflow: hidden; background: #F4F4F2; color: #16181A; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+
+  <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#D6202A"/><rect x="30" y="30" width="40" height="40" rx="10" fill="#fff"/><text x="50" y="60" font-family="system-ui" font-size="26" font-weight="700" fill="#D6202A" text-anchor="middle">QR</text></svg></template>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <div style="flex: 1; min-height: 0; overflow-y: auto; padding: 18px 22px 20px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 3px; min-width: 0;">
+          <div style="font-size: 22px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ terminalTitle }}</div>
+          <div style="display: flex; align-items: baseline; gap: 8px; font-size: 13px; color: #6B7075;">
+            <div style="font-family: 'IBM Plex Mono', monospace;">{{ merchantId }}</div>
+            <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ merchant }}</div>
+          </div>
+        </div>
+        <img src="assets/activbank-qr-app.png" alt="ActivBank QR" style="width: 40px; height: 40px; flex: 0 0 40px; border-radius: 10px; object-fit: cover; display: block;" />
+      </div>
+
+      <div onClick="{{ openQr }}" style="margin-top: 20px; padding: 22px 22px 20px; border-radius: 22px; background: #FFFFFF; border: 1px solid #E7E7E2; display: flex; flex-direction: column; align-items: center; gap: 14px; cursor: pointer; user-select: none;" style-active="background: #FAFAF8;">
+        <div style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 14px;">
+          <img src="assets/tjqr-logo.png" alt="QR рамзи ягона" style="width: 104px; height: 46px; flex: 0 0 104px; object-fit: contain; display: block;" />
+          <div style="width: 1px; height: 40px; flex: 0 0 1px; background: #4F4F4F;"></div>
+          <div style="font-family: Lato, 'Helvetica Neue', Helvetica, sans-serif; font-weight: 700; font-size: 19px; line-height: 1.12; color: #4F4F4F;">QR рамзи<br />ягона</div>
+        </div>
+        <div style="font-family: Lato, 'Helvetica Neue', Helvetica, sans-serif; font-size: 14px; color: #4F4F4F; text-align: center; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ merchant }}</div>
+        <div style="width: 100%; max-width: 286px; aspect-ratio: 1 / 1; background: rgba(137, 131, 131, 0.16); display: flex; align-items: center; justify-content: center;">
+          <div style="width: 76.4%; height: 76.4%; background: #FFFFFF; overflow: hidden;">{{ qrImg }}</div>
+        </div>
+        <div style="font-family: Lato, 'Helvetica Neue', Helvetica, sans-serif; font-size: 11.5px; line-height: 1.35; color: #4F4F4F; text-align: center; text-wrap: pretty;">Дар ҳолати ба миён омадани мушкилӣ ба ташкилоти қарзии молиявии худ муроҷиат намоед</div>
+        <sc-if value="{{ qrFailed }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size: 13px; line-height: 1.4; text-align: center; color: #B3352F; text-wrap: pretty;">{{ qrFailedText }}</div>
+        </sc-if>
+      </div>
+
+      <div style="margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="padding: 18px; border-radius: 18px; background: #FFFFFF; border: 1px solid #E7E7E2; display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 14px; color: #6B7075;">Успешные за сегодня</div>
+          <div style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em; font-family: 'IBM Plex Mono', monospace;">{{ todaySum }}</div>
+          <div style="font-size: 13px; color: #9AA0A6; font-family: 'IBM Plex Mono', monospace;">{{ todayCount }}</div>
+        </div>
+        <div style="padding: 18px; border-radius: 18px; background: #FFFFFF; border: 1px solid #E7E7E2; display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 14px; color: #6B7075;">Отклонённые</div>
+          <div style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em; font-family: 'IBM Plex Mono', monospace; color: #B3352F;">{{ cancelSum }}</div>
+          <div style="font-size: 13px; color: #9AA0A6; font-family: 'IBM Plex Mono', monospace;">{{ cancelCount }}</div>
+        </div>
+      </div>
+
+      <div onClick="{{ goHistory }}" style="margin-top: 12px; padding: 18px 20px; border-radius: 18px; background: #FFFFFF; border: 1px solid #E7E7E2; display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; user-select: none;" style-active="background: #F4F4F2;">
+        <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
+          <div style="font-size: 17px; font-weight: 500;">Последний платёж</div>
+          <div style="font-size: 13px; color: #6B7075; font-family: 'IBM Plex Mono', monospace;">{{ lastPayStr }}</div>
+        </div>
+        <div style="font-size: 19px; font-weight: 600; font-family: 'IBM Plex Mono', monospace; color: #0E8F6F;">{{ lastPaySum }}</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isHistory }}" hint-placeholder-val="{{ false }}">
+
+  <div style="flex: 0 0 auto; padding: 18px 22px 8px; font-size: 26px; font-weight: 600; letter-spacing: -0.02em;">История</div>
+  <div ref="{{ listRef }}" onTouchStart="{{ pullStart }}" onTouchMove="{{ pullMove }}" onTouchEnd="{{ pullEnd }}" onMouseDown="{{ pullStart }}" onMouseMove="{{ pullMove }}" onMouseUp="{{ pullEnd }}" onMouseLeave="{{ pullEnd }}" onWheel="{{ pullWheel }}" style="flex: 1; min-height: 0; overflow-y: auto; padding: 6px 22px 20px; touch-action: pan-y;">
+    <div style="height: {{ pullH }}px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+      <div style="font-size: 12px; color: {{ pullColor }}; font-family: 'IBM Plex Mono', monospace;">{{ pullText }}</div>
+    </div>
+    <sc-if value="{{ noRows }}" hint-placeholder-val="{{ false }}">
+      <div style="padding: 40px 8px; font-size: 15px; line-height: 1.5; color: #9AA0A6; text-wrap: pretty;">{{ emptyText }}</div>
+    </sc-if>
+    <sc-for list="{{ groups }}" as="g" hint-placeholder-count="2">
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 6px 2px 2px;">
+          <div style="font-size: 14px; font-weight: 600; color: #16181A;">{{ g.label }}</div>
+          <div style="font-size: 13px; color: #9AA0A6; font-family: 'IBM Plex Mono', monospace;">{{ g.total }}</div>
+        </div>
+        <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="4">
+          <div onClick="{{ r.open }}" style="padding: 14px; background: #FFFFFF; border: 1px solid #E2E2DE; border-left: 3px solid {{ r.edge }}; border-radius: 12px; display: flex; flex-direction: column; gap: 8px; cursor: pointer; user-select: none;" style-active="background: #FAFAF8;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+              <div style="font-size: 20px; font-weight: 600; letter-spacing: -0.01em; font-family: 'IBM Plex Mono', monospace; color: {{ r.sumColor }};">{{ r.sum }}</div>
+              <div style="height: 26px; padding: 0 10px; display: flex; align-items: center; border-radius: 7px; font-size: 13px; background: {{ r.chipBg }}; color: {{ r.chipFg }};">{{ r.status }}</div>
+            </div>
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; font-size: 13px; color: #6B7075; font-family: 'IBM Plex Mono', monospace;">
+              <div>{{ r.payer }}</div>
+              <div>{{ r.time }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+    <sc-if value="{{ hasMore }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ loadMore }}" style="height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #E2E2DE; border-radius: 12px; background: #FFFFFF; font-size: 15px; color: #16181A; cursor: pointer; user-select: none;" style-active="background: #F0F0EC;">{{ moreLabel }}</div>
+    </sc-if>
+    </div>
+  </sc-if>
+
+  <div style="flex: 0 0 auto; padding: 8px 22px 18px; background: #FFFFFF; border-top: 1px solid #E7E7E2; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="2">
+      <div onClick="{{ t.pick }}" style="height: 58px; border-radius: 16px; background: {{ t.bg }}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; user-select: none;">
+        <div style="width: 17px; height: 17px; border: 2px solid {{ t.fg }}; border-radius: {{ t.radius }};"></div>
+        <div style="font-size: 12px; color: {{ t.fg }};">{{ t.name }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ qrBig }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeQr }}" style="position: absolute; inset: 0; z-index: 20; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 20px; cursor: pointer; user-select: none;">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 14px;">
+        <img src="assets/tjqr-logo.png" alt="QR рамзи ягона" style="width: 104px; height: 46px; flex: 0 0 104px; object-fit: contain; display: block;" />
+        <div style="width: 1px; height: 40px; flex: 0 0 1px; background: #4F4F4F;"></div>
+        <div style="font-family: Lato, 'Helvetica Neue', Helvetica, sans-serif; font-weight: 700; font-size: 19px; line-height: 1.12; color: #4F4F4F;">QR рамзи<br />ягона</div>
+      </div>
+      <div style="width: min(92vw, 78vh); aspect-ratio: 1 / 1; background: #FFFFFF; overflow: hidden;">{{ qrImgBig }}</div>
+      <div style="font-family: Lato, 'Helvetica Neue', Helvetica, sans-serif; font-size: 15px; color: #4F4F4F; text-align: center;">{{ merchant }}</div>
+      <div style="font-size: 13px; color: #9AA0A6;">Нажмите, чтобы закрыть</div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; z-index: 14; background: #F4F4F2; display: flex; flex-direction: column;">
+      <div style="flex: 0 0 auto; padding: 20px 16px 16px; background: #FFFFFF; border-bottom: 1px solid #E2E2DE; display: flex; flex-direction: column; gap: 12px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+          <div onClick="{{ closeSel }}" style="height: 44px; padding: 0 14px; display: flex; align-items: center; gap: 8px; margin-left: -14px; font-size: 16px; color: #6B7075; cursor: pointer; user-select: none;">← Назад</div>
+          <div style="height: 28px; padding: 0 11px; display: flex; align-items: center; border-radius: 7px; font-size: 13px; background: {{ selChipBg }}; color: {{ selChipFg }};">{{ selStatus }}</div>
+        </div>
+        <div style="font-size: 40px; font-weight: 600; letter-spacing: -0.02em; font-family: 'IBM Plex Mono', monospace;">{{ selSum }}</div>
+      </div>
+
+      <div style="flex: 1; min-height: 0; overflow-y: auto; padding: 16px;">
+        <div style="padding: 16px; background: #FFFFFF; border: 1px solid #E2E2DE; border-radius: 12px; display: flex; flex-direction: column; gap: 14px;">
+          <sc-for list="{{ selFields }}" as="f" hint-placeholder-count="6">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 14px;">
+              <div style="font-size: 14px; color: #6B7075;">{{ f.k }}</div>
+              <div style="font-size: 14px; font-weight: 500; text-align: right; font-family: 'IBM Plex Mono', monospace;">{{ f.v }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="margin-top: 12px; padding: 16px; background: #FFFFFF; border: 1px solid #E2E2DE; border-radius: 12px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-size: 14px; font-weight: 600;">Ход операции</div>
+          <sc-for list="{{ selTrail }}" as="t" hint-placeholder-count="3">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 8px; height: 8px; flex: 0 0 8px; border-radius: 4px; background: {{ t.dot }};"></div>
+              <div style="flex: 1; min-width: 0; font-size: 14px;">{{ t.name }}</div>
+              <div style="font-size: 13px; color: #6B7075; font-family: 'IBM Plex Mono', monospace;">{{ t.time }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="flex: 0 0 auto; padding: 12px 16px 16px; background: #FFFFFF; border-top: 1px solid #E2E2DE; display: flex; flex-direction: column; gap: 10px;">
+        <div style="height: 56px; display: flex; align-items: center; justify-content: center; background: #F0F0EC; color: #A6ABB0; border: 1px solid #E2E2DE; border-radius: 12px; font-size: 17px; font-weight: 600; user-select: none;">Возврат платежа</div>
+        <div style="display: flex; gap: 10px;">
+          <div style="flex: 1; height: 52px; display: flex; align-items: center; justify-content: center; border: 1px solid #E2E2DE; border-radius: 12px; background: {{ printBg }}; color: {{ printFg }}; font-size: 16px; cursor: pointer; user-select: none;" style-active="background: #F0F0EC;" onClick="{{ doPrint }}">{{ printLabel }}</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showPin }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; z-index: 22; background: #F4F4F2; display: flex; flex-direction: column; justify-content: space-between; padding: 28px 22px 26px; gap: 18px;">
+      <div style="display: flex; flex-direction: column; gap: 22px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <img src="assets/activbank-qr-app.png" alt="ActivBank QR" style="width: 44px; height: 44px; border-radius: 11px; object-fit: cover; display: block;" />
+          <div style="display: flex; flex-direction: column; gap: 2px;">
+            <div style="font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: #16181A;">ActivBank QR</div>
+            <div style="font-size: 11px; letter-spacing: 0.06em; color: #9AA0A6; font-family: 'IBM Plex Mono', monospace;">кабинет мерчанта</div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; color: #16181A;">{{ pinTitle }}</div>
+          <div style="font-size: 14px; line-height: 1.5; color: #6B7075; text-wrap: pretty;">{{ pinSub }}</div>
+        </div>
+        <div style="display: flex; gap: 14px; justify-content: center;">
+          <sc-for list="{{ pinCells }}" as="c" hint-placeholder-count="4">
+            <div style="width: 18px; height: 18px; border-radius: 9px; border: 1.5px solid {{ c.border }}; background: {{ c.bg }};"></div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ pinError }}" hint-placeholder-val="{{ false }}">
+          <div style="padding: 14px 16px; border-radius: 12px; background: #FDECEA; font-size: 14px; line-height: 1.45; color: #B3352F; text-wrap: pretty;">{{ pinErrorText }}</div>
+        </sc-if>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+          <sc-for list="{{ pinKeys }}" as="k" hint-placeholder-count="12">
+            <div onClick="{{ k.press }}" style="height: clamp(48px, 9vh, 62px); display: flex; align-items: center; justify-content: center; border-radius: 14px; background: {{ k.bg }}; font-size: 22px; font-weight: 500; color: #16181A; cursor: pointer; user-select: none;" style-active="background: #E4E4DF;">{{ k.label }}</div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ pinForgetShown }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ pinForget }}" style="height: 44px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #6B7075; cursor: pointer; user-select: none;">Забыли код? Войти по номеру</div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showLogin }}" hint-placeholder-val="{{ true }}">
+    <div style="position: absolute; inset: 0; z-index: 20; background: #F4F4F2; display: flex; flex-direction: column;">
+      <div style="flex: 1; min-height: 0; overflow-y: auto; padding: 24px 22px 26px; display: flex; flex-direction: column; gap: 20px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <img src="assets/activbank-qr-app.png" alt="ActivBank QR" style="width: 44px; height: 44px; border-radius: 11px; object-fit: cover; display: block;" />
+          <div style="display: flex; flex-direction: column; gap: 2px;">
+            <div style="font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: #16181A;">ActivBank QR</div>
+            <div style="font-size: 11px; letter-spacing: 0.06em; color: #9AA0A6; font-family: 'IBM Plex Mono', monospace;">кабинет мерчанта</div>
+          </div>
+        </div>
+
+        <sc-if value="{{ authPhone }}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="font-size: 26px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; color: #16181A;">Вход для мерчантов</div>
+              <div style="font-size: 14px; line-height: 1.5; color: #6B7075; text-wrap: pretty;">Укажите номер, привязанный к вашей точке. Проверим его в базе банка.</div>
+            </div>
+            <div style="height: 60px; display: flex; align-items: center; gap: 12px; padding: 0 20px; background: #FFFFFF; border: 1.5px solid {{ phoneBorder }}; border-radius: 16px;">
+              <div style="font-size: 18px; color: #6B7075; font-family: 'IBM Plex Mono', monospace;">+992</div>
+              <div style="font-size: 18px; letter-spacing: 0.12em; color: #16181A; font-family: 'IBM Plex Mono', monospace;">{{ phoneMask }}</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ authCode }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 13px; line-height: 1.45; color: #6B7075;">{{ codeSub }}</div>
+            <div style="display: flex; gap: 6px;">
+              <sc-for list="{{ codeCells }}" as="c" hint-placeholder-count="6">
+                <div style="flex: 1; min-width: 0; height: 58px; background: #FFFFFF; border: 1.5px solid {{ c.border }}; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 600; font-family: 'IBM Plex Mono', monospace;">{{ c.ch }}</div>
+              </sc-for>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+              <div onClick="{{ backToPhone }}" style="font-size: 14px; color: #0E8F6F; cursor: pointer; user-select: none;">Изменить номер</div>
+              <div onClick="{{ resend }}" style="font-size: 14px; color: {{ resendColor }}; cursor: pointer; user-select: none; font-family: 'IBM Plex Mono', monospace;">{{ resendLabel }}</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ authError }}" hint-placeholder-val="{{ false }}">
+          <div style="padding: 14px 16px; border-radius: 12px; background: #FDECEA; font-size: 14px; line-height: 1.45; color: #B3352F; text-wrap: pretty;">{{ authErrorText }}</div>
+        </sc-if>
+
+        <div onClick="{{ authSubmit }}" style="flex: 0 0 auto; height: 58px; display: flex; align-items: center; justify-content: center; border-radius: 16px; background: {{ authBtnBg }}; color: {{ authBtnFg }}; font-size: 17px; font-weight: 600; cursor: pointer; user-select: none;">{{ authBtnLabel }}</div>
+
+        <sc-if value="{{ showKeypad }}" hint-placeholder-val="{{ true }}">
+          <div style="flex: 0 0 auto; margin-top: -6px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+            <sc-for list="{{ authKeys }}" as="k" hint-placeholder-count="12">
+              <div onClick="{{ k.press }}" style="height: clamp(44px, 8vh, 56px); display: flex; align-items: center; justify-content: center; border-radius: 14px; background: {{ k.bg }}; font-size: 21px; font-weight: 500; color: #16181A; cursor: pointer; user-select: none;" style-active="background: #E4E4DF;">{{ k.label }}</div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 420, &quot;height&quot;: 900}, &quot;apiBaseUrl&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;http://10.64.20.101:8888&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Бэкенд&quot;}, &quot;connection&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;Онлайн&quot;, &quot;Нестабильно&quot;, &quot;Нет связи&quot;], &quot;default&quot;: &quot;Онлайн&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Бэкенд&quot;}, &quot;pollSeconds&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;min&quot;: 2, &quot;max&quot;: 30, &quot;step&quot;: 1, &quot;default&quot;: 5, &quot;unit&quot;: &quot; с&quot;, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Бэкенд&quot;}}">
+/* ── Контракт бэка (uploads/pos_api_handoff.md) ───────────────────────
+   Префикс /pos. Суммы TJS (float). Статусы: success | cancel (refunded позже).
+
+   POST /pos/otp/request { phone }         -> { ok, message, expires_in }
+        404 нет терминала · 403 не наш мерчант · 429 кулдаун (60 с)
+   POST /pos/otp/verify  { phone, code }   -> { ok, terminalId, terminalName, storeName }
+        400 неверный/истёк код (detail: «Осталось попыток: N») · 429 нужен новый код
+   GET  /pos/terminal?phone=…              -> { terminal:{terminalName,terminalPhone,
+                                                storeName,terminalQR}, last_payment|null }
+   GET  /pos/summary?phone=…&date=YYYY-MM-DD
+        -> { date, success:{count,amount}, cancel:{count,amount}, currency }
+   GET  /pos/history?phone=…&date=…|from=…&to=…&limit=50&offset=0
+        -> { terminal, total, limit, offset, count, payments:[…] }
+
+   Платёж: { sender (готовое имя банка), sender_bank_id, amount, status,
+             creation_datetime }, отсортированы от новых к старым.
+
+   На фронте: вход = 2 шага OTP (6 цифр, таймер 60 с); плитки главной берутся
+   из /pos/summary (фронт не суммирует); история — /pos/history постранично
+   (offset += limit), группировка по дням локальная по creation_datetime.
+──────────────────────────────────────────────────────────────────── */
+/* ── QR-энкодер, встроенный в файл ──────────────────────────────────
+   Раньше подключался динамическим import("./qr-encode.js") — в собранном
+   APK этот модуль не загружался, поэтому QR оставался пустым. Теперь код
+   лежит здесь и работает без внешних файлов. Byte mode, уровень L, v1–20. */
+const QEXP = new Array(256), QLOG = new Array(256);
+(() => { let x = 1; for (let i = 0; i < 255; i++) { QEXP[i] = x; QLOG[x] = i; x <<= 1; if (x & 0x100) x ^= 0x11d; } QEXP[255] = 1; })();
+const qmul = (a, b) => (a === 0 || b === 0) ? 0 : QEXP[(QLOG[a] + QLOG[b]) % 255];
+
+function qrsGen(n) {
+  let p = [1];
+  for (let i = 0; i < n; i++) {
+    const q = [1, QEXP[i]], r = new Array(p.length + 1).fill(0);
+    for (let a = 0; a < p.length; a++) for (let b = 0; b < 2; b++) r[a + b] ^= qmul(p[a], q[b]);
+    p = r;
+  }
+  return p;
+}
+
+function qrsEc(data, ecLen) {
+  const gen = qrsGen(ecLen), res = new Array(data.length + ecLen).fill(0);
+  data.forEach((d, i) => { res[i] = d; });
+  for (let i = 0; i < data.length; i++) {
+    const f = res[i];
+    if (!f) continue;
+    for (let j = 0; j < gen.length; j++) res[i + j] ^= qmul(gen[j], f);
+  }
+  return res.slice(data.length);
+}
+
+const QSPEC = {
+  1: { ec: 7, groups: [[1, 19]] }, 2: { ec: 10, groups: [[1, 34]] }, 3: { ec: 15, groups: [[1, 55]] },
+  4: { ec: 20, groups: [[1, 80]] }, 5: { ec: 26, groups: [[1, 108]] }, 6: { ec: 18, groups: [[2, 68]] },
+  7: { ec: 20, groups: [[2, 78]] }, 8: { ec: 24, groups: [[2, 97]] }, 9: { ec: 30, groups: [[2, 116]] },
+  10: { ec: 18, groups: [[2, 68], [2, 69]] }, 11: { ec: 20, groups: [[4, 81]] },
+  12: { ec: 24, groups: [[2, 92], [2, 93]] }, 13: { ec: 26, groups: [[4, 107]] },
+  14: { ec: 30, groups: [[3, 115], [1, 116]] }, 15: { ec: 22, groups: [[5, 87], [1, 88]] },
+  16: { ec: 24, groups: [[5, 98], [1, 99]] }, 17: { ec: 28, groups: [[1, 107], [5, 108]] },
+  18: { ec: 30, groups: [[5, 120], [1, 121]] }, 19: { ec: 28, groups: [[3, 113], [4, 114]] },
+  20: { ec: 28, groups: [[3, 107], [5, 108]] }
+};
+const QALIGN = {
+  1: [], 2: [6, 18], 3: [6, 22], 4: [6, 26], 5: [6, 30], 6: [6, 34],
+  7: [6, 22, 38], 8: [6, 24, 42], 9: [6, 26, 46], 10: [6, 28, 50],
+  11: [6, 30, 54], 12: [6, 32, 58], 13: [6, 34, 62], 14: [6, 26, 46, 66],
+  15: [6, 26, 48, 70], 16: [6, 26, 50, 74], 17: [6, 30, 54, 78], 18: [6, 30, 56, 82],
+  19: [6, 30, 58, 86], 20: [6, 34, 62, 90]
+};
+const QMAXV = 20;
+const qCap = (v) => QSPEC[v].groups.reduce((a, g) => a + g[0] * g[1], 0);
+
+function qUtf8(text) {
+  const out = [], s = String(text);
+  for (let i = 0; i < s.length; i++) {
+    const cp = s.codePointAt(i);
+    if (cp > 0xffff) i++;
+    if (cp < 0x80) out.push(cp);
+    else if (cp < 0x800) out.push(0xc0 | (cp >> 6), 0x80 | (cp & 0x3f));
+    else if (cp < 0x10000) out.push(0xe0 | (cp >> 12), 0x80 | ((cp >> 6) & 0x3f), 0x80 | (cp & 0x3f));
+    else out.push(0xf0 | (cp >> 18), 0x80 | ((cp >> 12) & 0x3f), 0x80 | ((cp >> 6) & 0x3f), 0x80 | (cp & 0x3f));
+  }
+  return out;
+}
+
+function qBch(v, gpoly, bits) {
+  let d = v << (bits - 1);
+  while (Math.floor(Math.log2(d)) >= bits - 1) d ^= gpoly << (Math.floor(Math.log2(d)) - (bits - 1));
+  return d;
+}
+const qFormatBits = (mask) => {
+  const data = (1 << 3) | mask;
+  return (((data << 10) | qBch(data, 0x537, 11)) ^ 0x5412) & 0x7fff;
+};
+const qVersionBits = (v) => (v << 12) | qBch(v, 0x1f25, 13);
+
+const QMASKS = [
+  (r, c) => (r + c) % 2 === 0,
+  (r) => r % 2 === 0,
+  (r, c) => c % 3 === 0,
+  (r, c) => (r + c) % 3 === 0,
+  (r, c) => (Math.floor(r / 2) + Math.floor(c / 3)) % 2 === 0,
+  (r, c) => ((r * c) % 2) + ((r * c) % 3) === 0,
+  (r, c) => (((r * c) % 2) + ((r * c) % 3)) % 2 === 0,
+  (r, c) => (((r + c) % 2) + ((r * c) % 3)) % 2 === 0
+];
+
+function qrMatrix(text) {
+  const bytes = qUtf8(text);
+  let v = 0;
+  for (let i = 1; i <= QMAXV; i++) {
+    const lenBits = i >= 10 ? 16 : 8;
+    if (qCap(i) * 8 >= 4 + lenBits + bytes.length * 8) { v = i; break; }
+  }
+  if (!v) throw new Error("payload too long");
+
+  const bits = [];
+  const push = (val, len) => { for (let i = len - 1; i >= 0; i--) bits.push((val >> i) & 1); };
+  push(4, 4);
+  push(bytes.length, v >= 10 ? 16 : 8);
+  bytes.forEach((b) => push(b, 8));
+  const capBits = qCap(v) * 8;
+  for (let i = 0; i < 4 && bits.length < capBits; i++) bits.push(0);
+  while (bits.length % 8) bits.push(0);
+  const words = [];
+  for (let i = 0; i < bits.length; i += 8) words.push(bits.slice(i, i + 8).reduce((a, b) => (a << 1) | b, 0));
+  const PAD = [0xec, 0x11];
+  let padI = 0;
+  while (words.length < qCap(v)) words.push(PAD[padI++ % 2]);
+
+  const blocks = [];
+  let p = 0;
+  QSPEC[v].groups.forEach(([count, len]) => {
+    for (let i = 0; i < count; i++) { blocks.push(words.slice(p, p + len)); p += len; }
+  });
+  const ecs = blocks.map((b) => qrsEc(b, QSPEC[v].ec));
+  const maxData = Math.max(...blocks.map((b) => b.length));
+  const stream = [];
+  for (let i = 0; i < maxData; i++) blocks.forEach((b) => { if (i < b.length) stream.push(b[i]); });
+  for (let i = 0; i < QSPEC[v].ec; i++) ecs.forEach((e) => stream.push(e[i]));
+
+  const n = 17 + 4 * v;
+  const m = Array.from({ length: n }, () => new Array(n).fill(0));
+  const fn = Array.from({ length: n }, () => new Array(n).fill(false));
+  const set = (r, c, val) => { if (r >= 0 && r < n && c >= 0 && c < n) { m[r][c] = val ? 1 : 0; fn[r][c] = true; } };
+
+  const finder = (R, C) => {
+    for (let r = -1; r <= 7; r++) for (let c = -1; c <= 7; c++) {
+      const ring = Math.max(Math.abs(r - 3), Math.abs(c - 3));
+      set(R + r, C + c, r >= 0 && r <= 6 && c >= 0 && c <= 6 && (ring === 3 || ring <= 1));
+    }
+  };
+  finder(0, 0); finder(0, n - 7); finder(n - 7, 0);
+  for (let i = 8; i < n - 8; i++) { set(6, i, i % 2 === 0); set(i, 6, i % 2 === 0); }
+
+  QALIGN[v].forEach((r) => QALIGN[v].forEach((c) => {
+    if ((r < 9 && c < 9) || (r < 9 && c > n - 10) || (r > n - 10 && c < 9)) return;
+    for (let dr = -2; dr <= 2; dr++) for (let dc = -2; dc <= 2; dc++) {
+      set(r + dr, c + dc, Math.max(Math.abs(dr), Math.abs(dc)) !== 1);
+    }
+  }));
+
+  set(n - 8, 8, 1);
+  for (let i = 0; i < 9; i++) { if (i === 6) continue; set(8, i, 0); set(i, 8, 0); }
+  for (let i = 0; i < 8; i++) { set(8, n - 1 - i, 0); set(n - 1 - i, 8, 0); }
+
+  if (v >= 7) {
+    const vb = qVersionBits(v);
+    for (let i = 0; i < 18; i++) {
+      const bit = (vb >> i) & 1;
+      set(Math.floor(i / 3), n - 11 + (i % 3), bit);
+      set(n - 11 + (i % 3), Math.floor(i / 3), bit);
+    }
+  }
+
+  const bitAt = (i) => (stream[i >> 3] >> (7 - (i & 7))) & 1;
+  const total = stream.length * 8;
+  let idx = 0, up = true;
+  for (let col = n - 1; col > 0; col -= 2) {
+    if (col === 6) col--;
+    for (let k = 0; k < n; k++) {
+      const row = up ? n - 1 - k : k;
+      for (const c of [col, col - 1]) {
+        if (fn[row][c]) continue;
+        m[row][c] = idx < total ? bitAt(idx) : 0;
+        idx++;
+      }
+    }
+    up = !up;
+  }
+
+  let best = 0, bestScore = Infinity, bestGrid = null;
+  for (let mask = 0; mask < 8; mask++) {
+    const g = m.map((row, r) => row.map((val, c) => (fn[r][c] ? val : (QMASKS[mask](r, c) ? val ^ 1 : val))));
+    let score = 0, dark = 0;
+    for (let r = 0; r < n; r++) {
+      let runR = 1, runC = 1;
+      for (let c = 0; c < n; c++) {
+        dark += g[r][c];
+        if (c && g[r][c] === g[r][c - 1]) { runR++; if (runR === 5) score += 3; else if (runR > 5) score++; } else runR = 1;
+        if (c && g[c][r] === g[c - 1][r]) { runC++; if (runC === 5) score += 3; else if (runC > 5) score++; } else runC = 1;
+      }
+    }
+    score += Math.floor(Math.abs((dark * 100) / (n * n) - 50) / 5) * 10;
+    if (score < bestScore) { bestScore = score; best = mask; bestGrid = g; }
+  }
+
+  const fb = qFormatBits(best);
+  const put = (r, c, val) => { bestGrid[r][c] = val; };
+  for (let i = 0; i < 15; i++) {
+    const bit = (fb >> i) & 1;
+    if (i < 6) put(8, i, bit);
+    else if (i < 8) put(8, i + 1, bit);
+    else if (i === 8) put(7, 8, bit);
+    else put(14 - i, 8, bit);
+    if (i < 8) put(n - 1 - i, 8, bit);
+    else put(8, n - 15 + i, bit);
+  }
+  put(n - 8, 8, 1);
+
+  const out = new Uint8Array(n * n);
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) out[r * n + c] = bestGrid[r][c];
+  return { n: n, bits: out };
+}
+
+function qrSvgLocal(text, quiet) {
+  const g = qrMatrix(text);
+  const q = quiet == null ? 2 : quiet;
+  const size = g.n + q * 2;
+  let d = "";
+  for (let r = 0; r < g.n; r++) {
+    let c = 0;
+    while (c < g.n) {
+      if (!g.bits[r * g.n + c]) { c++; continue; }
+      let len = 0;
+      while (c + len < g.n && g.bits[r * g.n + c + len]) len++;
+      d += "M" + (c + q) + " " + (r + q) + "h" + len + "v1h-" + len + "z";
+      c += len;
+    }
+  }
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + " " + size + '" shape-rendering="crispEdges"><rect width="' + size + '" height="' + size + '" fill="#fff"/><path d="' + d + '" fill="#000000"/></svg>';
+}
+
+const API = {
+  baseUrl: "",
+  timeoutMs: 8000,
+  paths: {
+    otpRequest: "/pos/otp/request",
+    otpVerify: "/pos/otp/verify",
+    terminal: "/pos/terminal",
+    summary: "/pos/summary",
+    history: "/pos/history"
+  },
+  posts: { otpRequest: 1, otpVerify: 1 },
+  pageLimit: 50,
+  resendCooldown: 60,
+  codeLen: 6
+};
+
+/* «1 платёж», «2 платежа», «5 платежей» */
+const plural = (n, one, few, many) => {
+  const v = Math.abs(Math.round(Number(n) || 0));
+  const d10 = v % 10, d100 = v % 100;
+  const word = d100 >= 11 && d100 <= 14 ? many : d10 === 1 ? one : d10 >= 2 && d10 <= 4 ? few : many;
+  return v + " " + word;
+};
+
+const hhmm = (d) => String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+const money = (v) => {
+  const n = Math.max(0, Number(v) || 0);
+  const int = String(Math.floor(n)).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return int + "," + String(Math.round((n - Math.floor(n)) * 100)).padStart(2, "0") + " TJS";
+};
+
+/* sender приходит с бэка уже готовым именем банка */
+const bankName = (sender) => (sender == null || sender === "" ? "—" : String(sender));
+
+/* статусы бэка -> статусы UI. Сейчас на бэке только success и cancel */
+const STMAP = {
+  success: "success", ok: "success", paid: "success",
+  cancel: "cancel", cancelled: "cancel", canceled: "cancel", declined: "cancel", failed: "cancel", rejected: "cancel",
+  pending: "pending", new: "pending", processing: "pending", created: "pending",
+  refunded: "refunded", refund: "refunded", reversed: "refunded"
+};
+const uiStatus = (s) => STMAP[String(s || "").toLowerCase()] || "success";
+
+/* incoming_tx -> строка истории */
+const normTx = (tx, i) => {
+  const dt = tx.creation_datetime ? new Date(tx.creation_datetime) : new Date();
+  return {
+    id: "TX-" + (tx.creation_datetime || "") + "-" + i,
+    ts: dt.getTime(),
+    iso: tx.creation_datetime || dt.toISOString(),
+    time: hhmm(dt),
+    date: String(dt.getDate()).padStart(2, "0") + "." + String(dt.getMonth() + 1).padStart(2, "0"),
+    amount: Number(tx.amount) || 0,
+    sender: tx.sender,
+    bankId: tx.sender_bank_id,
+    bank: bankName(tx.sender),
+    payer: bankName(tx.sender),
+    status: uiStatus(tx.status)
+  };
+};
+
+/* ── локальная сессия и код входа ──────────────────────────────────
+   Номер и данные точки хранятся на устройстве, чтобы при каждом запуске
+   не вводить телефон и SMS-код: вход по 4-значному коду. Код хранится
+   только как хеш, привязанный к номеру. */
+const SKEY = "abqr.session.v1";
+const pinHash = (pin, phone) => {
+  let h = 2166136261;
+  const src = "abqr:" + phone + ":" + pin;
+  for (let i = 0; i < src.length; i++) { h ^= src.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+  return h.toString(16);
+};
+const loadSession = () => { try { return JSON.parse(localStorage.getItem(SKEY) || "null"); } catch (e) { return null; } };
+const saveSession = (o) => { try { localStorage.setItem(SKEY, JSON.stringify(o)); } catch (e) {} };
+const dropSession = () => { try { localStorage.removeItem(SKEY); } catch (e) {} };
+const PIN_LEN = 4, PIN_TRIES = 5;
+
+const ST = {
+  success: { label: "Оплачено", bg: "#E8F5F0", fg: "#0B7259", dot: "#0E8F6F" },
+  cancel: { label: "Отклонён", bg: "#FDECEA", fg: "#B3352F", dot: "#C9403A" },
+  pending: { label: "Ожидание", bg: "#FFF6E5", fg: "#8A5A00", dot: "#D89A1F" },
+  refunded: { label: "Возврат", bg: "#EEF1FB", fg: "#3B4E8F", dot: "#5A6FB5" }
+};
+
+
+class Component extends DCLogic {
+  state = {
+    authed: false, aMode: null, aStep: "phone", phone: "", code: "",
+    login: "", pass: "", showPass: false, aErr: "", aLoading: false, resendIn: 0,
+    ops: [], total: 0, offset: 0, loadingMore: false, summary: null, summaryDate: "",
+    codeExpires: 300, needNewCode: false,
+    filter: "Все", selId: null, sinceSync: 0, syncOk: true, pull: 0, pulling: false,
+    tab: "home", screen: "list", amount: "", result: null, attempt: 0, payer: "",
+    storeName: "", terminalName: "", terminalId: "", terminalPhone: "", terminalQR: "", lastPay: null,
+    terminal: "—", now: new Date(), printState: "", qrBig: false,
+    pinStage: "", pin: "", pin1: "", pinErr: "", pinTries: 0
+  };
+
+  /* Печать чека на встроенном принтере Sunmi через нативный плагин
+     (Capacitor.Plugins.SunmiPrinter). Бэкенд в печати не участвует. */
+  printer() {
+    const cap = window.Capacitor;
+    return (cap && cap.Plugins && cap.Plugins.SunmiPrinter) || null;
+  }
+
+  receipt(sel) {
+    const s = this.state;
+    return {
+      header: "ActivBank QR",
+      merchant: s.storeName || "",
+      terminal: s.terminalName || "",
+      rows: [
+        { k: "Дата", v: sel.date },
+        { k: "Время", v: sel.time },
+        { k: "Банк", v: sel.bank },
+        { k: "Терминал", v: String(s.terminalId || "—") }
+      ],
+      status: ST[sel.status].label,
+      amount: money(sel.amount),
+      qr: s.terminalQR || "",
+      footer: "Чек об операции · сохраните для обращения в банк"
+    };
+  }
+
+  sendPrint(sel) {
+    const s = this.state;
+    if (!sel || s.printState === "sending") return;
+    clearTimeout(this.pr);
+    const dev = this.printer();
+    if (!dev) {
+      this.setState({ printState: "nodev" });
+      this.pr = setTimeout(() => this.setState({ printState: "" }), 4000);
+      return;
+    }
+    this.setState({ printState: "sending" });
+    dev.printReceipt(this.receipt(sel))
+      .then(() => {
+        this.setState({ printState: "ok" });
+        this.pr = setTimeout(() => this.setState({ printState: "" }), 3000);
+      })
+      .catch(() => this.setState({ printState: "err" }));
+  }
+
+  /* ── код входа ──────────────────────────────────────────────── */
+  pKey(k) {
+    const s = this.state;
+    if (k === "del") return this.setState({ pin: s.pin.slice(0, -1), pinErr: "" });
+    if (s.pin.length >= PIN_LEN) return;
+    const next = s.pin + k;
+    this.setState({ pin: next, pinErr: "" });
+    if (next.length === PIN_LEN) this.pt = setTimeout(() => this.pinDone(next), 120);
+  }
+
+  pinDone(pin) {
+    const s = this.state;
+    if (s.pinStage === "create") {
+      return this.setState({ pin1: pin, pin: "", pinStage: "confirm", pinErr: "" });
+    }
+    if (s.pinStage === "confirm") {
+      if (pin !== s.pin1) {
+        return this.setState({ pin: "", pin1: "", pinStage: "create", pinErr: "Коды не совпали. Задайте код заново." });
+      }
+      saveSession({
+        phone: s.phone, pinHash: pinHash(pin, s.phone),
+        storeName: s.storeName, terminalName: s.terminalName,
+        terminalId: s.terminalId, terminalQR: s.terminalQR
+      });
+      return this.setState({ pin: "", pin1: "", pinStage: "", pinErr: "" });
+    }
+    const sess = loadSession();
+    if (sess && sess.pinHash === pinHash(pin, sess.phone)) {
+      this.setState({ pin: "", pinStage: "", pinErr: "", pinTries: 0, authed: true, tab: "home", sinceSync: 0 });
+      this.loadTerminal().catch(() => {});
+      this.loadSummary();
+      this.pollHistory();
+      return;
+    }
+    const tries = s.pinTries + 1;
+    if (tries >= PIN_TRIES) {
+      dropSession();
+      return this.setState({
+        pin: "", pin1: "", pinTries: 0, pinStage: "", phone: "", aStep: "phone",
+        aErr: "Код входа введён неверно " + PIN_TRIES + " раз. Войдите по номеру телефона."
+      });
+    }
+    this.setState({ pin: "", pinTries: tries, pinErr: "Неверный код. Осталось попыток: " + (PIN_TRIES - tries) });
+  }
+
+  forgetPin() {
+    dropSession();
+    this.setState({ pinStage: "", pin: "", pin1: "", pinErr: "", pinTries: 0, phone: "", code: "", aStep: "phone", aErr: "", authed: false });
+  }
+
+  componentDidMount() {
+    this.clock = setInterval(() => this.tick(), 1000);
+    this.qrFn = qrSvgLocal;
+    const sess = loadSession();
+    if (sess && sess.pinHash && sess.phone) {
+      this.setState({
+        pinStage: "unlock", phone: sess.phone,
+        storeName: sess.storeName || "", terminalName: sess.terminalName || "",
+        terminalId: sess.terminalId || "", terminalQR: sess.terminalQR || "",
+        terminal: sess.terminalName || "—"
+      });
+    }
+  }
+
+  /* QR рисуется из terminalQR, полученного с бэка: svg -> data-uri */
+  qrDataUri(payload) {
+    if (!payload) return null;
+    if (!this.qrFn) return null;
+    if (this.qrCache && this.qrCache.payload === payload) return this.qrCache.uri;
+    try {
+      const uri = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(this.qrFn(payload, 4));
+      this.qrCache = { payload: payload, uri: uri, err: null };
+      return uri;
+    } catch (e) {
+      this.qrCache = { payload: payload, uri: null, err: e && e.message };
+      return null;
+    }
+  }
+
+  /* серый плейсхолдер, пока payload не пришёл */
+  qrPlaceholderUri() {
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29"><rect width="29" height="29" fill="#fff"/><g fill="#E4E4DF"><rect x="2" y="2" width="25" height="25"/></g><g fill="#C9CAC5"><rect x="3" y="3" width="7" height="7"/><rect x="19" y="3" width="7" height="7"/><rect x="3" y="19" width="7" height="7"/></g></svg>';
+    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  }
+  componentWillUnmount() { clearInterval(this.clock); clearTimeout(this.at); clearTimeout(this.pt); clearTimeout(this.pr); clearTimeout(this.qt); clearTimeout(this.wt); }
+
+  listRef = (el) => { this.list = el; };
+
+  pullStart = (e) => {
+    if (this.state.pulling || !this.list || this.list.scrollTop > 0) return;
+    const t = e.touches ? e.touches[0] : e;
+    this.y0 = t.clientY;
+  };
+  pullMove = (e) => {
+    if (this.y0 == null || this.state.pulling) return;
+    const t = e.touches ? e.touches[0] : e;
+    const dy = t.clientY - this.y0;
+    if (dy <= 0) return this.setState({ pull: 0 });
+    if (e.cancelable) e.preventDefault();
+    this.setState({ pull: Math.min(96, dy * 0.7) });
+  };
+  pullEnd = () => {
+    this.y0 = null;
+    if (this.state.pull >= 48) return this.doRefresh();
+    this.setState({ pull: 0 });
+  };
+  pullWheel = (e) => {
+    if (this.state.pulling || !this.list || this.list.scrollTop > 0 || e.deltaY >= 0) return;
+    const next = Math.min(96, this.state.pull - e.deltaY * 1.2);
+    this.setState({ pull: next });
+    clearTimeout(this.wt);
+    this.wt = setTimeout(() => this.pullEnd(), 220);
+  };
+
+  doRefresh() {
+    if (this.state.pulling) return;
+    this.setState({ pull: 56, pulling: true });
+    this.loadSummary();
+    this.api("history", { limit: API.pageLimit, offset: 0 })
+      .then((r) => {
+        this.applyTerminal(r && r.terminal);
+        this.setState({ lastPay: null });
+        this.applyPayments(r && r.payments, { total: r && r.total, offset: (r && r.count) || 0 });
+        this.setState({ pulling: false, pull: 0 });
+      })
+      .catch(() => this.setState({ pulling: false, pull: 0, syncOk: false }));
+  }
+
+  offline() { return (this.props.connection ?? "Онлайн") === "Нет связи"; }
+  pollSec() { return Math.max(2, Math.round(this.props.pollSeconds ?? 5)); }
+
+  tick() {
+    const s = this.state;
+    const patch = { now: new Date() };
+    if (s.resendIn > 0) patch.resendIn = s.resendIn - 1;
+    if (s.authed) patch.sinceSync = s.sinceSync + 1;
+    this.setState(patch);
+  }
+
+  base() { return (this.props.apiBaseUrl ?? API.baseUrl ?? "http://10.64.20.101:8888").replace(/\/$/, ""); }
+  fullPhone() { return "+992" + this.state.phone; }
+
+  api(name, payload) {
+    if (this.offline()) return Promise.reject(new Error("offline"));
+    if (!this.base()) return Promise.reject(Object.assign(new Error("network"), { code: 0, detail: "Адрес сервера не задан" }));
+    const get = !API.posts[name];
+    const p = payload || {};
+    let q = "";
+    if (get) {
+      const qs = ["phone=" + encodeURIComponent(p.phone || this.fullPhone())];
+      ["date", "from", "to", "limit", "offset"].forEach((k) => {
+        if (p[k] != null && p[k] !== "") qs.push(k + "=" + encodeURIComponent(p[k]));
+      });
+      q = "?" + qs.join("&");
+    }
+    const ctl = new AbortController();
+    const kill = setTimeout(() => ctl.abort(), API.timeoutMs);
+    return fetch(this.base() + API.paths[name] + q, {
+      method: get ? "GET" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: get ? undefined : JSON.stringify(p),
+      signal: ctl.signal
+    })
+      .then((r) => r.json().then((body) => {
+        if (!r.ok) throw Object.assign(new Error("http"), { code: r.status, detail: body && body.detail });
+        return body;
+      }))
+      .catch((e) => {
+        /* fail-closed: без сервера банка приложение не работает — демо-режима нет */
+        if (e && e.code) throw e;
+        throw Object.assign(new Error("network"), { code: 0, detail: "Нет связи с сервером " + this.base() });
+      })
+      .finally(() => clearTimeout(kill));
+  }
+
+  isoDate(d) {
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+
+  applyTerminal(t) {
+    if (!t) return;
+    this.setState({
+      storeName: t.storeName || "", terminalName: t.terminalName || "",
+      terminalId: t.terminalId != null ? t.terminalId : this.state.terminalId,
+      terminalPhone: t.terminalPhone || "", terminalQR: t.terminalQR || "",
+      terminal: t.terminalName || "—"
+    });
+    const sess = loadSession();
+    if (sess && sess.pinHash) {
+      saveSession(Object.assign({}, sess, {
+        storeName: t.storeName || sess.storeName,
+        terminalName: t.terminalName || sess.terminalName,
+        terminalId: t.terminalId != null ? t.terminalId : sess.terminalId,
+        terminalQR: t.terminalQR || sess.terminalQR
+      }));
+    }
+  }
+
+  applyPayments(list, opts) {
+    const o = opts || {};
+    const fresh = (list || []).map(normTx);
+    const ops = (o.append ? this.state.ops.concat(fresh) : fresh).sort((a, b) => b.ts - a.ts);
+    this.setState({
+      ops: ops,
+      total: o.total != null ? o.total : ops.length,
+      offset: o.offset != null ? o.offset : ops.length,
+      lastPay: this.state.lastPay || ops.find((x) => x.status === "success") || null,
+      sinceSync: 0, syncOk: true, loadingMore: false
+    });
+  }
+
+  loadTerminal() {
+    return this.api("terminal", {}).then((r) => {
+      this.applyTerminal(r && r.terminal);
+      if (r && r.last_payment) this.setState({ lastPay: normTx(r.last_payment, 0) });
+    });
+  }
+
+  /* GET /pos/summary — суммы и количество за день считает бэк */
+  loadSummary(date) {
+    const day = date || this.isoDate(new Date());
+    return this.api("summary", { date: day })
+      .then((r) => this.setState({ summary: r || null, summaryDate: day }))
+      .catch(() => this.setState({ summary: null }));
+  }
+
+  /* GET /pos/history — первая страница */
+  pollHistory() {
+    this.setState({ sinceSync: 0 });
+    return this.api("history", { limit: API.pageLimit, offset: 0 })
+      .then((r) => {
+        this.applyTerminal(r && r.terminal);
+        this.applyPayments(r && r.payments, { total: r && r.total, offset: (r && r.count) || 0 });
+      })
+      .catch(() => this.setState({ syncOk: false }));
+  }
+
+  /* следующая страница: offset += limit */
+  loadMore() {
+    const s = this.state;
+    if (s.loadingMore || s.ops.length >= s.total) return;
+    this.setState({ loadingMore: true });
+    this.api("history", { limit: API.pageLimit, offset: s.offset })
+      .then((r) => this.applyPayments(r && r.payments, {
+        append: true, total: r && r.total, offset: s.offset + ((r && r.count) || 0)
+      }))
+      .catch(() => this.setState({ loadingMore: false, syncOk: false }));
+  }
+
+  mode() { return "phone"; }
+
+  aKey(k) {
+    const s = this.state;
+    if (s.aLoading) return;
+    const field = s.aStep === "phone" ? "phone" : "code";
+    const max = field === "phone" ? 9 : API.codeLen;
+    if (k === "del") return this.setState({ [field]: s[field].slice(0, -1), aErr: "" });
+    if (s[field].length >= max) return;
+    const next = s[field] + k;
+    this.setState({ [field]: next, aErr: "" });
+    if (field === "code" && next.length === API.codeLen) this.at = setTimeout(() => this.verifyOtp(next), 250);
+  }
+
+  /* POST /pos/otp/request */
+  requestOtp() {
+    const s = this.state;
+    if (s.phone.length < 9 || s.aLoading) return;
+    this.setState({ aLoading: true, aErr: "" });
+    this.api("otpRequest", { phone: this.fullPhone() })
+      .then((r) => this.setState({
+        aLoading: false, aStep: "code", code: "", aErr: "",
+        resendIn: API.resendCooldown, codeExpires: (r && r.expires_in) || 300, triesLeft: null
+      }))
+      .catch((e) => this.setState({
+        aLoading: false,
+        aErr: e && e.code === 404 ? "Терминал с таким номером не найден."
+          : e && e.code === 403 ? "Терминал не подключён к ActivBank QR."
+          : e && e.code === 429 ? ((e.detail) || "Код уже отправляли. Подождите немного.")
+          : (e && e.detail) || "Нет связи с сервером. Проверьте интернет."
+      }));
+  }
+
+  /* POST /pos/otp/verify */
+  verifyOtp(code) {
+    const s = this.state;
+    const val = code || s.code;
+    if (val.length < API.codeLen || s.aLoading) return;
+    this.setState({ aLoading: true, aErr: "" });
+    this.api("otpVerify", { phone: this.fullPhone(), code: val })
+      .then((r) => this.openShift(r))
+      .catch((e) => {
+        const many = e && e.code === 429;
+        this.setState({
+          aLoading: false, code: "", needNewCode: many,
+          aErr: many ? ((e.detail) || "Слишком много попыток. Запросите новый код.")
+            : e && e.code === 400 ? ((e.detail) || "Неверный код или истёк срок действия.")
+            : (e && e.detail) || "Нет связи с сервером. Проверьте интернет."
+        });
+      });
+  }
+
+  authSubmit() {
+    return this.state.aStep === "phone" ? this.requestOtp() : this.verifyOtp();
+  }
+
+  openShift(r) {
+    const d = r || {};
+    this.setState({
+      aLoading: false, authed: true, aErr: "", sinceSync: 0, syncOk: true, tab: "home",
+      storeName: d.storeName || "", terminalName: d.terminalName || "",
+      terminalId: d.terminalId != null ? d.terminalId : "", terminal: d.terminalName || "—"
+    });
+    const sess = loadSession();
+    if (!sess || !sess.pinHash || sess.phone !== this.state.phone) {
+      this.setState({ pinStage: "create", pin: "", pin1: "", pinErr: "" });
+    }
+    this.loadTerminal().catch(() => {});
+    this.loadSummary();
+    this.pollHistory();
+  }
+
+  logout() {
+    dropSession();
+    clearTimeout(this.at); clearTimeout(this.pt);
+    this.setState({ authed: false, aStep: "phone", code: "", pass: "", aErr: "", aLoading: false, screen: "list", selId: null, amount: "", pinStage: "", pin: "", pin1: "" });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const isPass = this.mode() === "pass";
+    const isCode = !isPass && s.aStep === "code";
+    const isPhone = !isPass && s.aStep === "phone";
+    const d = s.phone.padEnd(9, "·");
+    const phoneReady = s.phone.length === 9;
+    const passReady = !!s.login.trim() && s.pass.length >= 4;
+    const authReady = isPhone ? phoneReady : isCode ? s.code.length === API.codeLen : passReady;
+
+    const conn = this.props.connection ?? "Онлайн";
+    const off = conn === "Нет связи";
+    const shaky = conn === "Нестабильно";
+    const okSync = s.syncOk && !off;
+
+    const visible = s.filter === "Все" ? s.ops : s.ops.filter((o) => ST[o.status].label === s.filter);
+    const sel = s.ops.find((o) => o.id === s.selId) || null;
+    const last = s.lastPay || s.ops.find((o) => o.status === "success") || null;
+
+    const payload = s.terminalQR || "";
+    const qrUri = this.qrDataUri(payload);
+    const qrErr = payload && !qrUri;
+
+    /* сегодня: платежи с датой = текущей календарной дате устройства */
+    const dayKey = (ts) => { const d = new Date(ts); return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate(); };
+    const todayKey = dayKey(Date.now());
+    const yestKey = dayKey(Date.now() - 86400000);
+    const MONTHS = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+    const dayLabel = (ts) => {
+      const k = dayKey(ts);
+      if (k === todayKey) return "Сегодня";
+      if (k === yestKey) return "Вчера";
+      const d = new Date(ts);
+      return d.getDate() + " " + MONTHS[d.getMonth()];
+    };
+    /* суммы за день приходят из /pos/summary (агрегация на бэке) */
+    const sum = s.summary || null;
+    const okBlock = (sum && sum.success) || null;
+    const cancelBlock = (sum && sum.cancel) || null;
+
+    const mkRow = (o) => {
+      const st = ST[o.status];
+      return {
+        time: o.time, sum: money(o.amount), payer: o.payer, status: st.label,
+        chipBg: st.bg, chipFg: st.fg, edge: st.dot,
+        sumColor: o.status === "success" ? "#16181A" : "#6B7075",
+        open: () => this.setState({ selId: o.id })
+      };
+    };
+    const grouped = [];
+    visible.forEach((o) => {
+      const k = dayKey(o.ts);
+      let g = grouped.find((x) => x.key === k);
+      if (!g) { g = { key: k, label: dayLabel(o.ts), rows: [], sum: 0 }; grouped.push(g); }
+      g.rows.push(mkRow(o));
+      if (o.status === "success") g.sum += o.amount;
+    });
+    grouped.forEach((g) => { g.total = money(g.sum); });
+
+    return {
+      qrImg: qrUri ? React.createElement("img", {
+        src: qrUri, alt: "QR",
+        style: { width: "100%", height: "100%", display: "block" }
+      }) : null,
+      qrImgBig: qrUri ? React.createElement("img", {
+        src: qrUri, alt: "QR",
+        style: { width: "100%", height: "100%", display: "block", imageRendering: "pixelated" }
+      }) : null,
+      qrBig: !!s.qrBig && !!qrUri,
+      openQr: () => { if (qrUri) this.setState({ qrBig: true }); },
+      closeQr: () => this.setState({ qrBig: false }),
+      qrFailed: !!qrErr,
+      qrFailedText: (this.qrCache && this.qrCache.err === "payload too long")
+        ? "QR не сгенерирован: terminalQR слишком длинный (" + payload.length + " симв.). Нужна ссылка или ID."
+        : "QR не сгенерирован. Проверьте поле terminalQR в ответе /pos/terminal.",
+      /* код входа */
+      showPin: !!s.pinStage,
+      pinTitle: s.pinStage === "unlock" ? "Код входа" : s.pinStage === "confirm" ? "Повторите код" : "Создайте код входа",
+      pinSub: s.pinStage === "unlock"
+        ? "+992 " + s.phone.slice(0, 2) + " ··· " + s.phone.slice(7, 9) + " · " + (s.terminalName || "терминал")
+        : s.pinStage === "confirm" ? "Введите те же 4 цифры ещё раз"
+        : "4 цифры — их будем спрашивать при каждом запуске вместо SMS",
+      pinCells: [0, 1, 2, 3].map((i) => ({
+        bg: s.pin.length > i ? "#16181A" : "transparent",
+        border: s.pinErr ? "#E3A9A5" : s.pin.length === i ? "#0E8F6F" : "#D7D7D2"
+      })),
+      pinError: !!s.pinErr, pinErrorText: s.pinErr,
+      pinKeys: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "del"].map((k) => ({
+        label: k === "del" ? "⌫" : k,
+        bg: k === "" ? "transparent" : "#EAEAE5",
+        press: k === "" ? null : () => this.pKey(k)
+      })),
+      pinForgetShown: s.pinStage === "unlock",
+      pinForget: () => this.forgetPin(),
+
+      /* вход */
+      showLogin: !s.authed && !s.pinStage,
+      authPhone: isPhone, authCode: isCode, authPass: isPass, showKeypad: !isPass,
+      tabPhoneBg: isPass ? "transparent" : "#FFFFFF",
+      tabPhoneFg: isPass ? "#6B7075" : "#16181A",
+      tabPassBg: isPass ? "#FFFFFF" : "transparent",
+      tabPassFg: isPass ? "#16181A" : "#6B7075",
+      pickPhone: () => this.setState({ aMode: "phone", aStep: "phone", aErr: "", code: "" }),
+      pickPass: () => this.setState({ aMode: "pass", aErr: "" }),
+      phoneMask: d.slice(0, 2) + " " + d.slice(2, 5) + " " + d.slice(5, 7) + " " + d.slice(7, 9),
+      phoneBorder: phoneReady ? "#0E8F6F" : "#E2E2DE",
+      codeSub: "Код из SMS на +992 " + d.slice(0, 2) + " ··· " + d.slice(7, 9) + " · действует " + Math.round((s.codeExpires || 300) / 60) + " мин",
+      codeCells: [0, 1, 2, 3, 4, 5].map((i) => ({
+        ch: s.code[i] || "",
+        border: s.aErr ? "#E3A9A5" : i === s.code.length ? "#0E8F6F" : "#E2E2DE"
+      })),
+      backToPhone: () => this.setState({ aStep: "phone", code: "", aErr: "", needNewCode: false }),
+      resendLabel: s.resendIn > 0 ? "Код снова через " + s.resendIn + " с" : "Отправить код снова",
+      resendColor: s.resendIn > 0 ? "#9AA0A6" : "#0E8F6F",
+      resend: () => { if (s.resendIn <= 0) this.requestOtp(); },
+      loginVal: s.login, passVal: s.pass,
+      passType: s.showPass ? "text" : "password",
+      passToggleLabel: s.showPass ? "Скрыть" : "Показать",
+      togglePass: () => this.setState({ showPass: !s.showPass }),
+      setLogin: (e) => this.setState({ login: e.target.value, aErr: "" }),
+      setPass: (e) => this.setState({ pass: e.target.value, aErr: "" }),
+      authError: !!s.aErr, authErrorText: s.aErr,
+      authKeys: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "del"].map((k) => ({
+        label: k === "del" ? "⌫" : k,
+        bg: k === "" ? "transparent" : "#EAEAE5",
+        border: "transparent",
+        press: k === "" ? null : () => this.aKey(k)
+      })),
+      authBtnBg: s.aLoading ? "#2E3237" : authReady ? "#16181A" : "#E2E2DE",
+      authBtnFg: s.aLoading || authReady ? "#FFFFFF" : "#9AA0A6",
+      authBtnLabel: s.aLoading ? (isPhone ? "Отправляем код…" : "Проверяем код…") : isPhone ? "Получить код" : "Войти",
+      authSubmit: () => this.authSubmit(),
+
+
+      /* история */
+      clockStr: hhmm(s.now),
+      netStr: off ? "нет сети" : shaky ? "2G" : "4G",
+      listRef: this.listRef,
+      pullStart: this.pullStart, pullMove: this.pullMove, pullEnd: this.pullEnd, pullWheel: this.pullWheel,
+      pullH: Math.round(s.pull),
+      pullText: s.pulling ? "обновляем…" : s.pull >= 56 ? "отпустите — запрос уйдёт" : s.pull > 0 ? "потяните вниз" : !s.syncOk ? "последний запрос не прошёл" : "",
+      pullColor: !s.syncOk && !s.pulling && s.pull === 0 ? "#B3352F" : "#9AA0A6",
+      groups: grouped,
+      noRows: visible.length === 0,
+      emptyText: "Пока нет операций. Потяните список вниз, чтобы обновить.",
+      hasMore: s.ops.length < s.total,
+      moreLabel: s.loadingMore ? "Загружаем…" : "Показать ещё (" + Math.max(0, s.total - s.ops.length) + ")",
+      loadMore: () => this.loadMore(),
+
+      /* деталь */
+      hasSel: !!sel,
+      selStatus: sel ? ST[sel.status].label : "",
+      selChipBg: sel ? ST[sel.status].bg : "#F0F0EC",
+      selChipFg: sel ? ST[sel.status].fg : "#6B7075",
+      selSum: sel ? money(sel.amount) : "",
+      selFields: sel ? [
+        { k: "Дата", v: sel.date },
+        { k: "Время", v: sel.time },
+        { k: "Банк-отправитель", v: sel.bank },
+        { k: "Терминал", v: s.terminalId ? String(s.terminalId) : (s.terminalName || "—") },
+        { k: "Точка", v: s.storeName || "—" }
+      ] : [],
+      selTrail: sel ? [
+        { name: "QR создан", time: sel.time, dot: "#9AA0A6" },
+        { name: "Клиент отсканировал", time: sel.time, dot: "#9AA0A6" },
+        { name: ST[sel.status].label, time: sel.time, dot: ST[sel.status].dot }
+      ] : [],
+      closeSel: () => this.setState({ selId: null, printState: "" }),
+      printLabel: s.printState === "sending" ? "Печатаем…"
+        : s.printState === "ok" ? "Чек напечатан"
+        : s.printState === "nodev" ? "Принтер не найден"
+        : s.printState === "err" ? "Ошибка печати — повторить" : "Печать чека",
+      printFg: s.printState === "ok" ? "#0B7259" : (s.printState === "err" || s.printState === "nodev") ? "#B3352F" : "#16181A",
+      printBg: s.printState === "sending" ? "#F0F0EC" : "#FFFFFF",
+      doPrint: () => this.sendPrint(sel),
+      noSel: !sel,
+
+      /* вкладки и единый QR */
+      isHome: s.tab === "home", isHistory: s.tab === "history",
+      goHistory: () => this.setState({ tab: "history" }),
+      tabs: [
+        { name: "Главная", key: "home", radius: "4px" },
+        { name: "История", key: "history", radius: "9px" }
+      ].map((t) => ({
+        name: t.name, radius: t.radius,
+        bg: s.tab === t.key ? "#FDECEC" : "transparent",
+        fg: s.tab === t.key ? "#D6202A" : "#9AA0A6",
+        pick: () => this.setState({ tab: t.key, selId: null })
+      })),
+      merchant: s.storeName || "—",
+      terminalTitle: s.terminalName || "—",
+      merchantId: "ID " + (s.terminalId || "—"),
+      todaySum: okBlock ? money(okBlock.amount) : "—",
+      todayCount: okBlock ? plural(okBlock.count, "платёж", "платежа", "платежей") : "—",
+      cancelSum: cancelBlock ? money(cancelBlock.amount) : "—",
+      cancelCount: cancelBlock ? plural(cancelBlock.count, "платёж", "платежа", "платежей") : "—",
+      lastPayStr: last ? bankName(last.sender) + " · " + last.time : "платежей ещё нет",
+      lastPaySum: last ? "+" + money(last.amount) : "—",
+      goHome: () => this.setState({ tab: "home" }),
+      logout: () => this.logout()
+    };
+  }
+}
+
+</script>
+</body>
+</html>
