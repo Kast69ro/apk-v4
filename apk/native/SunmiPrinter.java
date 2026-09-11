@@ -1,4 +1,5 @@
 package tj.activbank.qr;
+import com.getcapacitor.JSArray;
 
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
@@ -99,7 +100,7 @@ public class SunmiPrinter extends Plugin {
             divider();
 
             left();
-            JSONArray rows = call.getArray("rows", new JSONArray());
+            JSONArray rows = call.getArray("rows", new JSArray());
             for (int i = 0; i < rows.length(); i++) {
                 JSONObject row = rows.optJSONObject(i);
                 if (row == null) continue;
